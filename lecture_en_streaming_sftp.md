@@ -38,28 +38,41 @@ php artisan make:controller AudioController
 ```php
 class AudioController extends Controller
 {
-    public function stream($filename)
-    {
-        // Vérifier si le fichier existe sur le serveur distant
-        if (!Storage::disk('sftp')->exists($filename)) {
-            abort(404, 'Fichier non trouvé');
-        }
-
-        // Diffuser le fichier en continu
-        return new StreamedResponse(function () use ($filename) {
-            $stream = Storage::disk('sftp')->readStream($filename);
-
-            while (!feof($stream)) {
-                echo fread($stream, 1024 * 8);
-                ob_flush();
-                flush();
-            }
-            fclose($stream);
-        }, 200, [
-            'Content-Type' => 'audio/mpeg',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"'
-        ]);
+   /**
+ * Diffuse un fichier audio en continu depuis un serveur SFTP.
+ *
+ * @param string $filename Le nom du fichier à diffuser.
+ * @return \Symfony\Component\HttpFoundation\StreamedResponse La réponse HTTP pour le streaming du fichier audio.
+ *
+ * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException Si le fichier n'est pas trouvé sur le serveur distant.
+ *  Author : Bamosgdev 
+ * @date 2024-10-27
+ */
+public function stream($filename)
+{
+    // Vérifie si le fichier existe sur le serveur distant
+    if (!Storage::disk('sftp')->exists($filename)) {
+        abort(404, 'Fichier non trouvé'); // Lance une erreur 404 si le fichier n'existe pas
     }
+
+    // Diffuse le fichier en continu
+    return new StreamedResponse(function () use ($filename) {
+        // Ouvre un flux de lecture pour le fichier audio
+        $stream = Storage::disk('sftp')->readStream($filename);
+
+        // Lit et envoie le contenu du fichier par morceaux de 8 Ko
+        while (!feof($stream)) {
+            echo fread($stream, 1024 * 8); // Lit 8 Ko du flux et l'affiche
+            ob_flush(); // Vide le tampon de sortie pour envoyer les données
+            flush(); // Force le navigateur à recevoir immédiatement les données
+        }
+        
+        fclose($stream); // Ferme le flux après la lecture
+    }, 200, [
+        'Content-Type' => 'audio/mpeg', // Définit le type de contenu comme audio/mpeg
+        'Content-Disposition' => 'inline; filename="' . $filename . '"' // Indique le nom du fichier dans la réponse
+    ]);
+}
 }
 ```
 ### 5. Mise en place de la route : 
