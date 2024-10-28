@@ -1,6 +1,9 @@
 ## Lire en streaming sur un serveur avec une connection SFTP
 
 ### 1. Télécharger la bibliothèque `flysystem-sftp-v3`
+```bash
+ composer require league/flysystem-sftp-v3:^3.0
+```
 * De quoi s'agit-il exactement ?
    - Laravel offre une puissante couche d'abstraction pour travailler avec des fichiers. Il prend en charge plusieurs systèmes de stockage de fichiers par défaut et peut être facilement étendu. Pour utiliser SFTP comme système de fichiers Laravel, nous devons créer un pilote personnalisé qui utilise le package league/flysystem-sftp-v3. Flysystem est une bibliothèque d'abstraction de système de fichiers pour PHP qui fournit une API simple et unifiée pour travailler avec des fichiers à travers différents systèmes de stockage.
 
