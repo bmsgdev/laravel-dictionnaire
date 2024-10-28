@@ -86,3 +86,5 @@ Route::get('/stream-audio/{filepath}',[AudioController::class,"stream"]);
 
 * 😎C'est terminé.
   Maintenant testez en utilisant : http://127.0.0.1:8000/api/stream-audio/chemin-du-fichier
+* Pour assurer une difusion continue, ajoutez au chemin , un parametre t qui est un timestamp :
+  - exemple vue.js :  :src="`${apiUrl}/stream-audio/kiana.mp3?t=${new Date().getTime()}`"
