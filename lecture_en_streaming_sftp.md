@@ -51,17 +51,17 @@ class AudioController extends Controller
  *  Author : Bamosgdev 
  * @date 2024-10-27
  */
-public function stream($filename)
+public function stream($filepath)
 {
     // Vérifie si le fichier existe sur le serveur distant
-    if (!Storage::disk('sftp')->exists($filename)) {
+    if (!Storage::disk('sftp')->exists($filepath)) {
         abort(404, 'Fichier non trouvé'); // Lance une erreur 404 si le fichier n'existe pas
     }
 
     // Diffuse le fichier en continu
-    return new StreamedResponse(function () use ($filename) {
+    return new StreamedResponse(function () use ($filepath) {
         // Ouvre un flux de lecture pour le fichier audio
-        $stream = Storage::disk('sftp')->readStream($filename);
+        $stream = Storage::disk('sftp')->readStream($filepath);
 
         // Lit et envoie le contenu du fichier par morceaux de 8 Ko
         while (!feof($stream)) {
@@ -73,14 +73,14 @@ public function stream($filename)
         fclose($stream); // Ferme le flux après la lecture
     }, 200, [
         'Content-Type' => 'audio/mpeg', // Définit le type de contenu comme audio/mpeg
-        'Content-Disposition' => 'inline; filename="' . $filename . '"' // Indique le nom du fichier dans la réponse
+        'Content-Disposition' => 'inline; filename="' . $filepath . '"' // Indique le nom du fichier dans la réponse
     ]);
 }
 }
 ```
 ### 5. Mise en place de la route : 
 ```php
-Route::get('/stream-audio/{filepath}',[AudioController::class,"stream"])->where('filename', '.*');
+Route::get('/stream-audio/{filepath}',[AudioController::class,"stream"])->where('filepath', '.*');
 ```
 * NB: n'oubliez pas d'importer le controlleur dans le fichier de route
 
