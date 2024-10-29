@@ -80,7 +80,7 @@ public function stream($filename)
 ```
 ### 5. Mise en place de la route : 
 ```php
-Route::get('/stream-audio/{filepath}',[AudioController::class,"stream"]);
+Route::get('/stream-audio/{filepath}',[AudioController::class,"stream"])->where('filename', '.*');
 ```
 * NB: n'oubliez pas d'importer le controlleur dans le fichier de route
 
